@@ -1,9 +1,17 @@
 import React from "react";
+import { connect } from "react-redux";
 import { Link, withRouter } from "react-router-dom";
+import { getSongsAction } from "../redux/action";
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    getSongs: (string) => dispatch(getSongsAction(string))
+  };
+};
 
 class Sidebar extends React.Component {
   state = {
-    searchInput: "",
+    searchInput: ""
   };
 
   render() {
@@ -59,7 +67,7 @@ class Sidebar extends React.Component {
                           aria-describedby="basic-addon2"
                           onChange={(event) =>
                             this.setState({
-                              searchInput: event.currentTarget.value,
+                              searchInput: event.currentTarget.value
                             })
                           }
                         />
@@ -72,7 +80,7 @@ class Sidebar extends React.Component {
                             type="button"
                             id="button-addon1"
                             onClick={() =>
-                              this.props.search(this.state.searchInput)
+                              this.props.getSongs(this.state.searchInput)
                             }
                           >
                             GO
@@ -101,4 +109,4 @@ class Sidebar extends React.Component {
   }
 }
 
-export default withRouter(Sidebar);
+export default withRouter(connect(null, mapDispatchToProps)(Sidebar));

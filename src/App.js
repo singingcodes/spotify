@@ -7,51 +7,31 @@ import Home from "./components/Home";
 import { Row } from "react-bootstrap";
 import Artist from "./components/Artist";
 import Album from "./components/Album";
+import { connect } from "react-redux";
+import { getSongsAction } from "./redux/action/index";
 
-let headers = new Headers({
-  "X-RapidAPI-Host": "deezerdevs-deezer.p.rapidapi.com",
-  "X-RapidAPI-Key": "222902beabmshb95a65b737cead6p1f3ac9jsn23ced94c0d20",
-});
+const mapStateToProps = (state) => {
+  return {
+    searchResults: state.home.songs
+  };
+};
+const mapDispatchToProps = (dispatch) => {
+  return {
+    getSongs: (string) => dispatch(getSongsAction(string))
+  };
+};
 
 class App extends React.Component {
-  state = {
-    searchResults: [],
-  };
-
-  search = async (string) => {
-    if (string.length > 2) {
-      try {
-        let response = await fetch(
-          "https://striveschool-api.herokuapp.com/api/deezer/search?q=" +
-            string,
-          {
-            method: "GET",
-            headers,
-          }
-        );
-
-        let result = await response.json();
-        let songs = result.data;
-
-        this.setState({
-          searchResults: songs,
-        });
-      } catch (err) {
-        console.log(err);
-      }
-    }
-  };
-
   render() {
     return (
       <Router>
         <div className="container-fluid">
           <Row>
-            <Sidebar search={this.search} />
+            <Sidebar />
             <Route
               path="/"
               exact
-              render={() => <Home searchResults={this.state.searchResults} />}
+              render={() => <Home searchResults={this.props.searchResults} />}
             />
             <Route path="/artist/:id" component={Artist} />
             <Route path="/album/:id" component={Album} />
@@ -63,4 +43,4 @@ class App extends React.Component {
   }
 }
 
-export default App;
+export default connect(mapStateToProps, mapDispatchToProps)(App);
